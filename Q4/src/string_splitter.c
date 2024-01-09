@@ -4,29 +4,54 @@
 #include <ctype.h> 
 
 char** splitString(const char *input, char delimiter, int *substringCount) {
-    // Hint 1: Count delimiters to determine substring count.
-    // Hint 2: extract and allocate memory for each substring.
+	int lengh = strlen(input);
+	for (int i=0 ; i<lengh ; i++)
+	{
+		if (input[i]==delimiter)
+			(*substringCount)++;
+	}
+	
+	char** substrings = (char**)malloc(*substringCount * sizeof(char*));
+	if (substrings == NULL)
+	{
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
 
+	const char* sub = input;
+	int index = 0;
+	
+	for (const char* c = input ; ; c++)
+	{
+		if (*c == delimiter || *c == '\0')
+		{
+			substrings[index] = (char*)malloc((c - sub + 1) * sizeof(char));
+			if (substrings[index] == NULL)
+			{
+                fprintf(stderr, "Memory allocation failed\n");
+                exit(EXIT_FAILURE);
+            }
+            
+            strncpy(substrings[index], sub, c - sub);
+            substrings[index][c - sub] = '\0';
+			
+			sub = c + 1;
+            index++;
 
-    // Sample Case 1:
-    // Input: "One;Two;Three;Four", delimiter = ';', substringCount points to an integer
-    // Expected Output: ["One", "Two", "Three", "Four"]
-    // After execution, *substringCount should be updated to 4
-
-    // Sample Case 2:
-    // Input: "SingleString", delimiter = ',', substringCount points to an integer
-    // Expected Output: ["SingleString"]
-    // After execution, *substringCount should be updated to 1
-
+            if (*c == '\0') 
+			{
+                break;
+            }
+		}
+	}
+	return substrings;
 }
 
 void freeSubstrings(char **substrings, int count) {
-    // Hint: Free each substring, then free the substring array.
-
-    // Sample Case:
-    // Input: Array of substrings ["Hello", "World", "Test"], count = 3
-    // Operation: Frees memory for each substring and then the array itself
-
+    for (int i = 0; i < count; ++i) {
+        free(substrings[i]);
+    }
+    free(substrings);
 }
 
 
